@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Base */
+  --bg-base: #080810;
+  --bg-surface: #0e0e1a;
+  --bg-elevated: #141428;
+  --border: #1e1e36;
+  --border-bright: #2e2e54;
+
+  /* Brand */
+  --indigo: #4F46E5;
+  --indigo-glow: #4F46E540;
+  --violet: #7C3AED;
+
+  /* Semantic */
+  --positive: #10B981;
+  --positive-glow: #10B98130;
+  --negative: #EF4444;
+  --negative-glow: #EF444430;
+  --neutral: #F59E0B;
+  --neutral-glow: #F59E0B30;
+
+  /* Text */
+  --text-primary: #F1F0FF;
+  --text-secondary: #9B99C0;
+  --text-dim: #4B4A6A;
+
+  /* Glow Sources */
+  --glow-hero: radial-gradient(ellipse 80% 50% at 60% 0%, #4F46E520 0%, transparent 70%);
+  --glow-negative: radial-gradient(ellipse 60% 40% at 50% 50%, #EF444418 0%, transparent 70%);
+  --glow-positive: radial-gradient(ellipse 60% 40% at 50% 50%, #10B98118 0%, transparent 70%);
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  background-image: var(--glow-hero);
+  background-repeat: no-repeat;
+  background-size: 100vw 100vh;
+}
+
+/* Antigravity Effects */
+.antigravity-wrapper {
+  perspective: 1000px;
+  perspective-origin: center center;
+}
+
+.antigravity-card {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 40px 80px rgba(0, 0, 0, 0.6),
+    0 0 120px var(--indigo-glow);
+}
+
+.antigravity-card.resting {
+  transform: perspective(1000px) rotateX(8deg) rotateY(-12deg) translateZ(0);
+}
+
+/* Kyntra UI Primitives */
+.glass-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 1px var(--border),
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 80px var(--indigo-glow);
+  backdrop-filter: blur(12px);
+  border-radius: 10px;
+}
+
+.section-label {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Utility Animations */
+@keyframes floatNum {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+  }
+}
+
+.animate-floatNum {
+  animation: floatNum 6s ease-in-out infinite;
+}
+
+@keyframes popUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.popup-animation {
+  animation: popUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Result card entrance */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeUp {
+  animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tabular number font variant */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Row drawer slide-in from right */
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Backdrop fade-in */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease forwards;
+}

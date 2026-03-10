@@ -1,0 +1,39 @@
+{
+  "name": "@pulse/web",
+  "version": "0.1.0",
+  "description": "PULSE_ Frontend — Next.js 14 sentiment intelligence dashboard",
+  "author": "Ankit Kumar <arsonic349@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^5.1.0",
+    "@clerk/themes": "^2.4.57",
+    "@pulse/shared": "workspace:*",
+    "@tanstack/react-query": "^5.90.21",
+    "axios": "^1.13.6",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.378.0",
+    "next": "14.2.35",
+    "react": "^18",
+    "react-dom": "^18",
+    "tailwind-merge": "^2.3.0",
+    "three": "0.183.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.37",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/three": "^0.183.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,15 @@
+import { auth } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import DashboardShell from '@/components/dashboard/DashboardShell';
+import { TokenInjector } from '@/components/TokenInjector';
+
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { userId } = await auth();
+    if (!userId) redirect('/');
+    return (
+        <>
+            <TokenInjector />
+            <DashboardShell>{children}</DashboardShell>
+        </>
+    );
+}

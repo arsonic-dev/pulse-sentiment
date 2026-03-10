@@ -1,0 +1,23 @@
+{
+  "name": "pulse",
+  "version": "1.0.0",
+  "description": "Sentiment Intelligence Platform — built by Ankit Kumar",
+  "author": "Ankit Kumar <arsonic349@gmail.com> (https://github.com/arsonic-dev)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arsonic-dev/pulse-sentiment"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "db:push": "turbo run db:push",
+    "db:studio": "turbo run db:studio"
+  },
+  "devDependencies": {
+    "turbo": "latest"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

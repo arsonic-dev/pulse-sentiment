@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pulse" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C3AED" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="dot" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+  </defs>
+  
+  <!-- App Background (Matches your dark UI) -->
+  <rect width="512" height="512" rx="112" fill="#080810" />
+  
+  <!-- Subtle border to make it pop inside tabs -->
+  <rect width="480" height="480" x="16" y="16" rx="96" fill="none" stroke="#2a2a4a" stroke-width="8" />
+
+  <!-- Pulse Waveform -->
+  <path d="M 110 256 L 190 256 L 230 150 L 290 380 L 330 256 L 390 256" 
+        stroke="url(#pulse)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+        
+  <!-- Glowing Live Dot -->
+  <circle cx="390" cy="256" r="26" fill="url(#dot)" />
+</svg>

@@ -1,0 +1,171 @@
+PULSE_ — Sentiment Intelligence Platform
+Implementation Plan · Full-Stack Portfolio Build · March 2026
+
+01 — Executive Summary
+Pulse is a full-stack AI-powered Sentiment Intelligence Platform built as a portfolio-grade product. The core philosophy is Build Everything, Activate Smartly — every feature is constructed but selectively gated to create a product that signals professional maturity to recruiters, clients, and collaborators.
+Core Objectives
+
+Demonstrate full-stack engineering across frontend, backend, database, and AI
+Show product thinking through gated features and a coherent pricing model
+Create a live, shareable URL that works in any browser, any device
+Build a foundation that can become a real SaaS without rewriting anything
+
+Guiding Principle
+A recruiter or potential client lands on pulse.yourdomain.com and within 60 seconds they see a working AI product — not a tutorial project. The landing page, live demo, gated Pro features, and API docs all signal: this person builds real products.
+
+02 — Feature Activation Strategy
+Every feature is built. Activation is a business decision, not a technical one.
+LIVE — Fully functional, accessible to all visitors after signup
+
+Real-time Sentiment Analysis · Priority P0 · 1 day
+Sentence Heatmap · P0 · included with analysis
+Emotion Profile (6 emotions) · P0 · included
+Keyword Extraction · P0 · included
+Analysis History · P0 · 0.5 days
+Projects & Folders · P1 · 1 day
+Batch CSV Upload (100 rows) · P1 · 1.5 days
+API Key Access (10 req/day) · P1 · 1 day
+CSV Export of Results · P1 · 0.5 days
+
+GATED — Built and working, shown with a Pro upgrade prompt
+
+Multi-language Analysis · P2 · 1 day
+Unlimited Batch Processing · P2 · 0.5 days
+Webhook Integrations · P2 · 1.5 days
+Team Collaboration · P3 · 2 days
+White-label Export · P3 · 1 day
+
+SHELL — Beautiful UI exists, non-functional, shows vision
+
+Competitive Benchmarking
+Sentiment Forecasting
+Salesforce / HubSpot Connect
+
+COMING SOON — Placeholder card in the dashboard
+
+Custom Fine-tuned Model
+
+
+03 — Technology Stack
+LayerTechnologyServicePurposeFrontendNext.js 14 (App Router)VercelSSR, routing, performanceStylingTailwind CSS—Utility-first, recruiters know itAuthClerkClerk.comOAuth in 2 hours, not 2 daysBackendNode.js + ExpressRailwayFast, JS ecosystem, easy deployDatabasePostgreSQLRailway / NeonRelational, shows DB knowledgeCacheRedisUpstashPerformance, rate limitingJob QueueBullMQRedis-backedAsync batch processingAI LayerClaude APIAnthropicAlready proven, cost-effectiveFile StorageCloudflare R2CloudflareS3-compatible, cheapMonitoringSentry + LogtailSaaSShows production maturityAnalyticsPostHogPostHogProduct analytics, free tier
+
+04 — Project Structure
+pulse/
+├── apps/
+│   ├── web/                    ← Next.js 14 frontend
+│   │   ├── app/
+│   │   │   ├── (landing)/      ← Public landing page
+│   │   │   ├── (dashboard)/    ← Auth-protected app
+│   │   │   │   ├── analyze/
+│   │   │   │   ├── batch/
+│   │   │   │   ├── projects/
+│   │   │   │   └── api-keys/
+│   │   │   └── (auth)/         ← Clerk login/signup
+│   └── api/                    ← Express backend
+│       ├── routes/
+│       │   ├── analyze.js
+│       │   ├── batch.js
+│       │   ├── projects.js
+│       │   └── keys.js
+│       ├── middleware/
+│       │   ├── auth.js          ← Clerk JWT verification
+│       │   └── rateLimit.js     ← Redis rate limiter
+│       └── services/
+│           ├── claude.js        ← AI wrapper
+│           └── cache.js         ← Redis caching
+├── packages/
+│   └── shared/                 ← Types + utils shared
+└── README.md                   ← Architecture diagram here
+
+05 — Build Phases (8-Day Sprint)
+Phase 0 · Days 1–2 · Scaffold & Infrastructure
+Tasks: Init monorepo, plug in Clerk auth, connect Postgres on Railway, set up CI/CD, register domain
+End state: Skeleton live at pulse.yourdomain.com — a real URL before a single feature is built
+Phase 1 · Days 3–4 · Core Analysis Engine
+Tasks: Wire Claude API to Express backend, Redis caching (same text = no duplicate API call), rate limiting middleware, connect the PULSE dashboard frontend to real backend
+End state: Real AI sentiment analysis working end-to-end in production
+Phase 2 · Day 5 · Batch Processing
+Tasks: CSV upload with multer, BullMQ job queue (process rows async), progress bar on frontend via polling, download enriched CSV result
+End state: Upload 100 rows, get back a fully sentiment-scored spreadsheet
+Phase 3 · Day 6 · Projects & History
+Tasks: Postgres tables for projects and analyses, save every analysis per user, projects page with create/name/organize
+End state: Full analysis history persisted, organized in projects
+Phase 4 · Day 7 · API Keys + Landing Page
+Tasks: API key generation stored as hashed values in DB, rate-limited to 10 req/day for free tier, public landing page with embedded live demo
+End state: Shareable demo link ready, developers can call the API
+Phase 5 · Day 8 · Polish & Launch
+Tasks: All Pro gates added with upgrade modals, Coming Soon shells built, mobile responsive pass, README with architecture diagram, custom domain wired
+End state: Portfolio-grade product fully live
+
+06 — Database Schema
+Tables
+
+users — Synced from Clerk (id, email, name, plan, created_at)
+projects — Grouping container (id, user_id, name, description, created_at)
+analyses — Core record (id, project_id, user_id, input_text, created_at)
+results — AI output (id, analysis_id, score, confidence, emotions JSONB, keywords JSONB, sentences JSONB)
+api_keys — Developer access (id, user_id, key_hash, name, calls_today, last_used)
+usage_logs — Every API call logged (id, user_id, source, tokens_used, created_at)
+
+Key Design Decisions
+
+results stored as JSONB in Postgres — flexible, queryable, no over-engineering
+api_keys stores hashed keys only — raw key shown once at generation, never again
+usage_logs enables future billing without schema changes
+plan field on users enables gating logic without a separate subscriptions table at MVP
+
+
+07 — API Design
+MethodEndpointAuthDescriptionPOST/api/v1/analyzeClerk JWT / API KeySingle text sentiment analysisPOST/api/v1/analyze/batchClerk JWTUpload CSV, queue batch jobGET/api/v1/analysesClerk JWTPaginated history for userGET/api/v1/analyses/:idClerk JWTSingle analysis with full resultsDELETE/api/v1/analyses/:idClerk JWTGDPR delete — hard deleteGET/api/v1/projectsClerk JWTList all user projectsPOST/api/v1/projectsClerk JWTCreate new projectGET/api/v1/projects/:id/analysesClerk JWTAnalyses within a projectPOST/api/v1/keysClerk JWTGenerate new API keyGET/api/v1/keysClerk JWTList keys (no raw values shown)DELETE/api/v1/keys/:idClerk JWTRevoke an API keyGET/api/v1/dashboard/statsClerk JWTAggregated usage metrics
+
+08 — Landing Page Blueprint
+The landing page is your portfolio pitch, your product pitch, and your technical signal all in one. Someone decides whether to reach out to you within 60 seconds of landing here.
+Page Structure (Top to Bottom)
+
+Hero — Headline + live demo embed (works without login, 3 free tries)
+Social Proof — Animated counter: "X analyses run today" pulled from real DB
+Feature Cards — 3 cards each with a live mini-demo GIF recorded from your own app
+How It Works — 3-step visual: Input → Analyze → Insights
+Pricing Table — Free / Pro / Enterprise (even if Stripe isn't wired yet)
+Tech Stack Row — Next.js · Claude AI · PostgreSQL · Redis · Vercel
+CTA Footer — "Try Free" + "View on GitHub" + "Read the Docs"
+
+Critical Rule
+The landing page demo must work without creating an account. Visitors get 3 free analyses. After that, a clean signup prompt appears. This single decision will 5x your signup conversion versus requiring login upfront.
+
+09 — Portfolio Signal Map
+What You BuiltSkill DemonstratedSignal to Recruiter / ClientNext.js 14 App RouterModern React, SSR, routingUses what companies use in 2026Clerk AuthenticationAuth integration, securityDoesn't reinvent the wheelExpress API + PostgresBackend + relational DBFull-stack, not just frontendRedis caching layerPerformance engineeringThinks about scale, not just featuresBullMQ job queueAsync systems designKnows distributed patternsClaude API integrationAI / LLM integrationBuilds with modern AI toolsRate limiting middlewareSecurity, API designProduction-minded thinkingGated feature systemProduct thinkingUnderstands business, not just codePricing pageBusiness awarenessCan talk to stakeholdersAPI keys + docsDeveloper experienceThinks about external usersREADME + architectureCommunication skillsCan document and explain workCustom domain + CI/CDDevOps fundamentalsShips and maintains real products
+
+10 — Visitor Experience Flow
+The exact journey anyone takes when they hit your URL:
+
+Land on page → Hero with live demo, no login required → signals: product-first, zero friction
+Try the demo → Paste text, real AI results in 2 seconds → signals: this actually works
+Hit 3-use limit → Clean prompt: "Sign up free to continue" → signals: feels like a real SaaS
+Sign up (10 sec) → Google OAuth via Clerk, instant dashboard access → signals: smooth onboarding
+Explore dashboard → Full analyzer, history, projects all working → signals: deep, polished product
+Try batch upload → Upload CSV, progress bar, download results → signals: technically impressive
+Hit a Pro feature → Upgrade modal with clear value prop → signals: business maturity
+Visit API docs → Copy a curl command, it actually works → signals: developer credibility
+Check GitHub → Clean repo, architecture diagram, solid README → signals: professional engineer
+
+
+11 — Golden Rules
+
+Ship a live URL by end of Day 2 — a live skeleton beats a perfect localhost app
+Never fake data — every number, every result must be real
+Mobile responsive from Day 1 — recruiters check links on their phones
+Every page loads under 2 seconds — performance is a feature
+README must contain: what it is, how to run it, architecture diagram, tech stack
+Gated features must look tempting, not broken — show the value, then ask for upgrade
+The GitHub repo must be public — it's part of your portfolio
+Add a custom domain — pulse.yourdomain.com beats a railway.app URL every time
+
+
+12 — What Comes After Launch
+Month 1–2
+Wire Stripe for real Pro upgrades · Increase batch limit to 10k rows · Add webhook support · Publish API docs on Mintlify
+Month 3–6
+Multi-language support · Zapier integration · Team workspaces · Begin SOC 2 if pursuing enterprise
+Month 6–12 (if traction exists)
+Fine-tune a custom model on your accumulated data · Launch "Pulse Sentiment Index" weekly report · Salesforce / HubSpot native integration · Consider pre-seed if MRR hits $5k+
