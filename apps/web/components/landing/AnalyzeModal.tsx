@@ -162,6 +162,7 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
     const [isCsvMode, setIsCsvMode] = useState(false);
     const [csvRows, setCsvRows] = useState<string[]>([]);
     const [csvFileName, setCsvFileName] = useState('');
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [progress, setProgress] = useState(0);
 
     // ── Read tries from localStorage when modal opens ──────────────────────
@@ -190,6 +191,7 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
                 setIsCsvMode(true);
                 setCsvRows(rows);
                 setCsvFileName(file.name);
+                setSelectedFile(file);
                 setText(''); // clear any existing text
             } else {
                 // Plain text file
@@ -208,6 +210,7 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
         setIsCsvMode(false);
         setCsvRows([]);
         setCsvFileName('');
+        setSelectedFile(null);
         setProgress(0);
     };
 
@@ -267,19 +270,16 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
         setIsCsvMode(false);
         setCsvRows([]);
         setCsvFileName('');
+        setSelectedFile(null);
         setProgress(0);
     };
 
     const handleRun = () => {
         syncTries();
         if (isCsvMode && csvRows.length > 0) {
-            // Need the original file object for backend upload
-            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-            if (fileInput?.files?.[0]) {
-                batchMutation.mutate(fileInput.files[0]);
+            if (selectedFile) {
+                batchMutation.mutate(selectedFile);
             } else {
-                // If file reference is lost, fall back to old behavior? 
-                // Better to alert
                 alert('File reference lost. Please re-upload your CSV.');
             }
         } else {
