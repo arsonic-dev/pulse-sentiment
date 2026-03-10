@@ -82,6 +82,8 @@ app.use(errorHandler);
 const PORT = env.PORT;
 app.listen(PORT, () => {
     console.log(`PULSE API running on http://localhost:${PORT} [${env.NODE_ENV}]`);
+    console.log(`[Config] Allowed Frontend URL: ${env.FRONTEND_URL}`);
+    console.log(`[Config] Incoming Port: ${process.env.PORT}`);
 
     // Start background processing worker
     startAnalysisWorker();
