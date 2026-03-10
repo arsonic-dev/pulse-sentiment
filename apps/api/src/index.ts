@@ -17,7 +17,9 @@ import analysesRouter from './routes/analyses';
 import projectsRouter from './routes/projects';
 import dashboardRouter from './routes/dashboard';
 import keysRouter from './routes/keys';
+import batchRouter from './routes/batch';
 import { webhookRouter } from './routes/webhooks';
+import { startAnalysisWorker } from './workers/analysisWorker';
 
 // ─── 5. DB (health check only) ────────────────────────────────────────────────
 import { db } from './db';
@@ -54,6 +56,7 @@ app.use('/api/v1/analyses', analysesRouter);
 app.use('/api/v1/projects', projectsRouter);
 app.use('/api/v1/dashboard', dashboardRouter);
 app.use('/api/v1/keys', keysRouter);
+app.use('/api/v1/analyze/batch', batchRouter);
 
 // Webhook — raw body parser, must remain independent
 app.use('/api/v1/webhooks', webhookRouter);
@@ -77,4 +80,10 @@ app.use(errorHandler);
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 const PORT = env.PORT;
-app.listen(PORT, () => console.log(`PULSE API running on http://localhost:${PORT} [${env.NODE_ENV}]`));
+app.listen(PORT, () => {
+    console.log(`PULSE API running on http://localhost:${PORT} [${env.NODE_ENV}]`);
+
+    // Start background processing worker
+    startAnalysisWorker();
+    console.log('[Worker] Analysis worker started successfully.');
+});
