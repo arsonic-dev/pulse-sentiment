@@ -22,6 +22,16 @@ function ScorePill({ score, label }: { score: number | null; label: string | nul
     );
 }
 
+function SourceBadge({ source }: { source: string | null }) {
+    const isBatch = source === 'batch';
+    return (
+        <span className={`px-1.5 py-0.5 rounded font-mono text-[8px] font-bold tracking-wider uppercase
+            ${isBatch ? 'bg-[#7C3AED20] text-[#A78BFA] border border-[#7C3AED40]' : 'bg-[var(--bg-elevated)] text-[var(--text-dim)] border border-[var(--border)]'}`}>
+            {isBatch ? 'Batch' : 'Single'}
+        </span>
+    );
+}
+
 export default function HistoryPage() {
     const [page, setPage] = useState(1);
     const [drawer, setDrawer] = useState<AnalysisRow | null>(null);
@@ -78,8 +88,8 @@ export default function HistoryPage() {
                         style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                         {/* Table header */}
                         <div className="grid px-4 py-2.5 border-b border-[var(--border)]"
-                            style={{ gridTemplateColumns: '1fr 100px 70px 80px 40px', background: 'var(--bg-elevated)' }}>
-                            {['Text', 'Date', 'Score', 'Label', ''].map(h => (
+                            style={{ gridTemplateColumns: '1fr 100px 70px 80px 80px 40px', background: 'var(--bg-elevated)' }}>
+                            {['Text', 'Date', 'Origin', 'Score', 'Label', ''].map(h => (
                                 <span key={h} className="font-mono text-[8px] tracking-[2px] uppercase text-[var(--text-dim)]">{h}</span>
                             ))}
                         </div>
@@ -96,7 +106,7 @@ export default function HistoryPage() {
                                 onClick={() => setDrawer(row)}
                                 className="grid items-center px-4 py-3 cursor-pointer hover:bg-[var(--bg-elevated)] transition group"
                                 style={{
-                                    gridTemplateColumns: '1fr 100px 70px 80px 40px',
+                                    gridTemplateColumns: '1fr 100px 70px 80px 80px 40px',
                                     borderBottom: i < data.data.length - 1 ? '1px solid var(--border)' : 'none',
                                 }}
                             >
@@ -106,6 +116,9 @@ export default function HistoryPage() {
                                 <span className="font-mono text-[10px] text-[var(--text-dim)]">
                                     {new Date(row.createdAt).toLocaleDateString()}
                                 </span>
+                                <div className="flex">
+                                    <SourceBadge source={row.source} />
+                                </div>
                                 <span className="font-mono text-[14px] font-bold" style={{ color: scoreColor(row.score ?? 50) }}>
                                     {row.score ?? '--'}
                                 </span>

@@ -135,4 +135,20 @@ export const pulseApi = {
         const { data } = await apiClient.get('/dashboard/stats');
         return data as { data: DashboardStats };
     },
+
+    // Batch Processing
+    uploadBatch: async (file: File, projectId?: string) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (projectId) formData.append('projectId', projectId);
+
+        const { data } = await apiClient.post('/analyze/batch', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return data as { data: { jobId: string; rowCount: number; status: string } };
+    },
+    getBatchStatus: async (jobId: string) => {
+        const { data } = await apiClient.get(`/analyze/batch/${jobId}`);
+        return data as { data: { id: string; status: string; progress: number; failedReason?: string; finishedOn?: number } };
+    },
 };

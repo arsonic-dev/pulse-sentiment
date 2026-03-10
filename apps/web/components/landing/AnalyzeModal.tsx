@@ -224,18 +224,35 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
         },
     });
 
-    // ── Batch mutation ─────────────────────────────────────────────────────
+    // ── Batch mutation (Server-side) ──────────────────────────────────────
     const batchMutation = useMutation({
-        mutationFn: async (rows: string[]) => {
-            const results: AnalyzeResponse[] = [];
-            for (let i = 0; i < rows.length; i++) {
-                const result = await pulseApi.analyzeText(rows[i]);
-                results.push(result);
-                setProgress(Math.round(((i + 1) / rows.length) * 100));
-                // Small delay to respect rate limits
-                if (i < rows.length - 1) await new Promise(r => setTimeout(r, 150));
-            }
-            return results;
+        mutationFn: async (file: File) => {
+            const { data } = await pulseApi.uploadBatch(file);
+            const jobId = data.jobId;
+
+            // Polling for status
+            return new Promise<AnalyzeResponse[]>((resolve, reject) => {
+                const poll = async () => {
+                    try {
+                        const status = await pulseApi.getBatchStatus(jobId);
+                        setProgress(status.data.progress);
+
+                        if (status.data.status === 'completed') {
+                            // Fetch the results that were just processed
+                            // For demo purposes, we will fetch the last rowCount analyses from history
+                            const history = await pulseApi.getAnalyses(1, data.rowCount);
+                            resolve(history.data.map(h => ({ data: h, meta: { fromCache: false } })));
+                        } else if (status.data.status === 'failed') {
+                            reject(new Error(status.data.failedReason || 'Batch processing failed'));
+                        } else {
+                            setTimeout(poll, 1000); // continue polling
+                        }
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+                poll();
+            });
         },
         onSuccess: (results) => {
             const companyData = buildCompanyData(csvRows, results, csvFileName || 'Batch Analysis');
@@ -256,7 +273,15 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
     const handleRun = () => {
         syncTries();
         if (isCsvMode && csvRows.length > 0) {
-            batchMutation.mutate(csvRows);
+            // Need the original file object for backend upload
+            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+            if (fileInput?.files?.[0]) {
+                batchMutation.mutate(fileInput.files[0]);
+            } else {
+                // If file reference is lost, fall back to old behavior? 
+                // Better to alert
+                alert('File reference lost. Please re-upload your CSV.');
+            }
         } else {
             singleMutation.mutate(text);
         }
