@@ -241,7 +241,7 @@ export default function AnalyzeModal({ isOpen, onClose, onSuccess, onBatchSucces
                             // Fetch the results that were just processed
                             // For demo purposes, we will fetch the last rowCount analyses from history
                             const history = await pulseApi.getAnalyses(1, data.rowCount);
-                            resolve(history.data.map(h => ({ data: h, meta: { fromCache: false } })));
+                            resolve(history.data.map(h => ({ data: h as any, meta: { fromCache: false } })) as any);
                         } else if (status.data.status === 'failed') {
                             reject(new Error(status.data.failedReason || 'Batch processing failed'));
                         } else {
