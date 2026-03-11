@@ -16,7 +16,7 @@ A production-grade, full-stack sentiment analysis platform. Paste any text, uplo
 
 | Landing Page | Dashboard Overview | Batch Analysis |
 |---|---|---|
-| _screenshot_ | _screenshot_ | _screenshot_ |
+| ![Landing Page](./public/screenshots/landing.png) | ![Dashboard Overview](./public/screenshots/dashboard.png) | ![Batch Analysis](./public/screenshots/batch.png) |
 
 ---
 
