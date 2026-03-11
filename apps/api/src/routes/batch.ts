@@ -100,6 +100,7 @@ router.get('/:id', softAuth, async (req: Request, res: Response) => {
             progress: typeof progress === 'number' ? progress : 0,
             failedReason: job.failedReason,
             finishedOn: job.finishedOn,
+            results: state === 'completed' ? job.returnvalue : undefined,
         }
     });
 });

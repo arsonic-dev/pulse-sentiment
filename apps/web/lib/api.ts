@@ -149,6 +149,6 @@ export const pulseApi = {
     },
     getBatchStatus: async (jobId: string) => {
         const { data } = await apiClient.get(`/analyze/batch/${jobId}`);
-        return data as { data: { id: string; status: string; progress: number; failedReason?: string; finishedOn?: number } };
+        return data as { data: { id: string; status: string; progress: number; failedReason?: string; finishedOn?: number; results?: any[] } };
     },
 };

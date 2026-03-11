@@ -17,6 +17,7 @@ export const startAnalysisWorker = () => {
 
             console.log(`[Worker] Starting job ${job.id} with ${total} rows...`);
 
+            const resultsList = [];
             for (let i = 0; i < total; i++) {
                 const row = rows[i];
 
@@ -31,7 +32,7 @@ export const startAnalysisWorker = () => {
                         source: 'batch',
                         userId: userId || null,
                         projectId: projectId || null,
-                    }).returning({ id: analyses.id });
+                    }).returning({ id: analyses.id, createdAt: analyses.createdAt });
 
                     await db.insert(results).values({
                         analysisId: record.id,
@@ -44,6 +45,16 @@ export const startAnalysisWorker = () => {
                         sentences: result.sentences as any,
                     });
 
+                    // Add to result list for the job return value
+                    resultsList.push({
+                        id: record.id,
+                        inputText: row.text,
+                        charCount: row.text.length,
+                        source: 'batch',
+                        createdAt: record.createdAt,
+                        ...result
+                    });
+
                 } catch (err) {
                     console.error(`[Worker] Failed row ${i} in job ${job.id}:`, err);
                 }
@@ -54,6 +65,7 @@ export const startAnalysisWorker = () => {
             }
 
             console.log(`[Worker] Finished job ${job.id}.`);
+            return resultsList;
         },
         {
             connection: {

@@ -30,7 +30,10 @@ const CONFIG = {
 };
 
 export function ScoreBadge({ label, size = 'md' }: ScoreBadgeProps) {
-    const cfg = CONFIG[label];
+    // Normalize label and provide fallback for robustness
+    const normalizedLabel = (label?.toLowerCase() || 'neutral') as keyof typeof CONFIG;
+    const cfg = CONFIG[normalizedLabel] || CONFIG.neutral;
+    
     const padSize = size === 'sm' ? 'px-2 py-0.5' : 'px-3 py-1';
     const textSize = size === 'sm' ? 'text-[9px]' : 'text-[11px]';
 
@@ -39,7 +42,7 @@ export function ScoreBadge({ label, size = 'md' }: ScoreBadgeProps) {
             className={`inline-flex items-center gap-1.5 rounded ${padSize} ${cfg.bg} ${cfg.border} border ${cfg.text} ${cfg.shadow} font-mono ${textSize} font-bold tracking-widest uppercase`}
         >
             <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot} animate-pulse`} />
-            {label}
+            {normalizedLabel}
         </span>
     );
 }
