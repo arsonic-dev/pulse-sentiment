@@ -56,7 +56,10 @@ export const startAnalysisWorker = () => {
             console.log(`[Worker] Finished job ${job.id}.`);
         },
         {
-            connection: { url: env.REDIS_URL },
+            connection: {
+                url: env.REDIS_URL,
+                maxRetriesPerRequest: null,
+            },
             concurrency: 2, // Process 2 rows at a time per worker instance
         }
     );

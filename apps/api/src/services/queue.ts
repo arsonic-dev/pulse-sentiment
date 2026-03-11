@@ -17,7 +17,10 @@ export const analysisQueue = new Queue('analysis-queue', {
             type: 'exponential',
             delay: 1000,
         },
-        removeOnComplete: true,
+        removeOnComplete: {
+            age: 3600, // Keep for 1 hour
+            count: 1000, // or last 1000
+        },
         removeOnFail: false,
     },
 });
